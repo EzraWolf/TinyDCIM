@@ -1,9 +1,9 @@
 [project]
-name = "TinyDCIM-Test"
+name = "TinyMOA-TestBench"
 version = "0.1.0"
-description = "Test package using CoboTB for TinyDCIM"
+description = "Test package using CoboTB for TinyMOA"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 dependencies = [
     "cocotb>=2.0.1",
 ]
