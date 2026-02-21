@@ -5,6 +5,10 @@ TinyMOA uses RV32EC. The RV32E base stands for "RISC-V 32b Embedded" and only us
 
 Additionally, TinyMOA extends the base RISC-V instruction set with custom instructions for efficient CIM operations and firmware optimization.
 
+### Custom Instructions
+WIP
+
+
 ### Zicond Extension (Conditional Zero)
 
 | Instruction | Encoding | funct7 | funct3 | Operation | Description |
@@ -53,19 +57,18 @@ C.LCXT x8, x9    # Restore x8-x15 from memory pointed by x8
 
 ---
 
-## Register Conventions (RISC-V ABI)
+## RV32E Register Conventions (RISC-V ABI)
 
-TinyMOA uses **x0-x15** (RV32E embedded). Register usage follows standard RISC-V calling conventions:
+Since TinyMOA uses RV32E with 16 registers (`x0-x15`) instead of 32, register usage follows standard but adjusted RISC-V calling conventions:
 
 | Register | ABI Name | Usage | Saved by |
 |----------|----------|-------|----------|
 | x0 | zero | Hardwired to 0 (reads always return 0, writes ignored) | - |
 | x1 | ra | Return address (link register) | Caller |
 | x2 | sp | Stack pointer | Callee |
-| x3 | gp | Global pointer (TinyMOA: **0x1000400**) | - |
-| x4 | tp | Thread pointer (TinyMOA: **0x8000000**) | - |
-| x5 | t0 | Temporary register | Caller |
-| x6-x7 | t1-t2 | Temporary registers | Caller |
+| x3 | gp | Global pointer | - |
+| x4 | tp | Thread pointer | - |
+| x5-7 | t0-t2 | Temporary registers | Caller |
 | x8 | s0/fp | Saved register / Frame pointer | Callee |
 | x9 | s1 | Saved register | Callee |
 | x10-x11 | a0-a1 | Function arguments / return values | Caller |
@@ -74,9 +77,9 @@ TinyMOA uses **x0-x15** (RV32E embedded). Register usage follows standard RISC-V
 **Caller-saved:** Function can freely modify these (caller must save if needed)  
 **Callee-saved:** Function must preserve these (callee must save/restore)
 
-### Compressed Register Subset (`rd'`, `rs1'`, `rs2'`)
+### Compressed Register Subset
 
-Compressed instructions encode registers in **3 bits** instead of 4/5, limiting them to **x8-x15**:
+Compressed instructions encode registers in 3 bits instead of 4 or 5, limiting them to `x8-x15`. They are written with an apostrophe such as `rd'`, `rs1'`, `rs2'`. Below is the compressed register table:
 
 | 3-bit encoding | Register | ABI Name | Calculation |
 |----------------|----------|----------|-------------|
@@ -89,7 +92,7 @@ Compressed instructions encode registers in **3 bits** instead of 4/5, limiting 
 | `110` | x14 | a4 | 8 + 6 = x14 |
 | `111` | x15 | a5 | 8 + 7 = x15 |
 
-**Why this subset?** These are the **most frequently used registers** in leaf functions (arguments, saved registers, temporaries). The 3-bit value is added to 8 to get the actual register number.
+These are the most frequently used registers in leaf functions (arguments, saved registers, temporaries) since the 3-bit value is added to 8 to get the actual register number.
 
 ## Glossary
 WIP
